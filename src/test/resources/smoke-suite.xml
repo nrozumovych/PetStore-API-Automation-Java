@@ -1,0 +1,14 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Petstore Smoke Suite">
+    <test name="API Smoke Tests">
+        <groups>
+            <run>
+                <include name="SMOKE"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.myapi.tests.tests.UserApiTests"/>
+            <class name="com.myapi.tests.tests.PetStoreApiTests"/>
+        </classes>
+    </test>
+</suite>

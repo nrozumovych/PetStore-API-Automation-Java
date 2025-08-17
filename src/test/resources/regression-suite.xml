@@ -1,0 +1,14 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Petstore Regression Suite">
+    <test name="API Regression Tests">
+        <groups>
+            <run>
+                <include name="REGRESSION"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.myapi.tests.tests.PetStoreApiTests"/>
+            <class name="com.myapi.tests.tests.UserApiTests"/>
+        </classes>
+    </test>
+</suite>
