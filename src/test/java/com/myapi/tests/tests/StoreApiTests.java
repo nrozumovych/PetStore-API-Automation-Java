@@ -108,16 +108,17 @@ public class StoreApiTests extends BaseTest {
     public void getInventoryByStatusTest() {
         logger.info("Step 1: Get initial inventory count for 'available' pets.");
         Response initialResponse = storeApiClient.getInventoryByStatus();
-        String petStatus = "available2025";
-        int initialAvailableCount = initialResponse.jsonPath().get(petStatus) != null ? initialResponse.jsonPath().getInt(petStatus) : 0;
+        String uniqueStatus = "test-status-" + System.currentTimeMillis();
+        int initialAvailableCount = initialResponse.jsonPath().get(uniqueStatus) != null ? initialResponse.jsonPath().getInt(uniqueStatus) : 0;
 
         logger.info("Step 2: Create a new pet with 'available' status.");
-        createNewPet(petStatus);
+        Integer petId = createNewPet(uniqueStatus);
 
         logger.info("Step 3: Get updated inventory count.");
-        storeApiClient.getInventoryAndVerifyStatusCount(petStatus, initialAvailableCount + 1);
+        storeApiClient.getInventoryAndVerifyStatusCount(uniqueStatus, initialAvailableCount + 1);
 
-        System.out.println("Test finished. The inventory count for '" + petStatus + "' pets was successfully validated.");
+        System.out.println("Test finished. The inventory count for '" + uniqueStatus + "' pets was successfully validated.");
+        petApiClient.deletePet(petId);
     }
 
     private Order getOrder(Integer petId, Integer orderId) {
