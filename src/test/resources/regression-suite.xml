@@ -9,6 +9,7 @@
         <classes>
             <class name="com.myapi.tests.tests.PetStoreApiTests"/>
             <class name="com.myapi.tests.tests.UserApiTests"/>
+            <class name="com.myapi.tests.tests.StoreApiTests"/>
         </classes>
     </test>
 </suite>
