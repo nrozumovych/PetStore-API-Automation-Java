@@ -1,0 +1,12 @@
+[
+  {
+    "name": "Ignored Tests",
+    "messageRegex": ".*ignored.*",
+    "matchedStatuses": ["skipped"]
+  },
+  {
+    "name": "Flaky Tests",
+    "messageRegex": ".*flaky.*",
+    "matchedStatuses": ["failed"]
+  }
+]

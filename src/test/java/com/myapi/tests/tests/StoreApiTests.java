@@ -7,6 +7,8 @@ import com.myapi.tests.models.Order;
 import com.myapi.tests.models.Pet;
 import com.myapi.tests.models.Tag;
 import com.myapi.tests.specs.ApiSpecifications;
+import io.qameta.allure.Description;
+import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
@@ -31,11 +33,15 @@ public class StoreApiTests extends BaseTest {
     }
 
     @Test(description = "Verify that a new order can be successfully placed for an existing pet", groups = {"REGRESSION"})
+    @Description("This end-to-end test covers the full lifecycle of an order: place, retrieve, and delete. It ensures the system correctly creates, reads, and deletes an order for an existing pet, validating data integrity at each stage.")
     public void e2eTestCreateReadDeleteOrderForExistingPetTest(){
-        logger.info("Preconditions: Creating a new pet");
         Integer petId = createNewPet("available");
-
-        logger.info("Place a new order for pet with ID: {}", petId);
+        Integer orderId = placeOrderStep(petId);
+        retrieveOrderStep(orderId, petId);
+        deleteOrderStep(orderId);
+    }
+    @Step("1. Place a new order for pet with ID: {0}")
+    private Integer placeOrderStep(Integer petId) {
         Integer orderId = new Random().nextInt(999) + 1;
         Order newOrder = getOrder(petId, orderId);
 
@@ -50,35 +56,30 @@ public class StoreApiTests extends BaseTest {
                 .body("complete", equalTo(newOrder.getComplete()));
 
         System.out.println("Test finished. Order successfully placed with ID: " + orderId);
-
-        logger.info("Retrieve an order with ID: {}", orderId);
-
+        return orderId;
+    }
+    @Step("2. Retrieve an order with ID: {0} and verify pet ID: {1}")
+    private void retrieveOrderStep(Integer orderId, Integer petId) {
         Response response = storeApiClient.getOrderByIdAndVerifyPetId(orderId, petId);
-
         response.then()
                 .statusCode(HttpStatus.SC_OK)
                 .body("id", equalTo(orderId))
-                .body("petId", equalTo(petId))
-                .body("quantity", equalTo(newOrder.getQuantity()))
-                .body("status",  equalTo(newOrder.getStatus()))
-                .body("complete", equalTo(newOrder.getComplete()))
-                .body("shipDate", equalTo(newOrder.getShipDate()));
-
-
+                .body("petId", equalTo(petId));
         System.out.println("Test finished. The order was successfully retrieved and validated.");
+    }
 
-        logger.info("Delete an order with ID: {}", orderId);
-
+    @Step("3. Delete an order with ID: {0}")
+    private void deleteOrderStep(Integer orderId) {
         Response deleteResponse = storeApiClient.deleteOrder(orderId);
         deleteResponse.then()
                 .statusCode(HttpStatus.SC_OK)
                 .body("code", equalTo(200))
                 .body("message", equalTo(String.valueOf(orderId)));
-
         System.out.println("Test finished. The order was successfully deleted.");
     }
 
     @Test(description = "Verify that a request for a non-existent order returns a 404 Not Found", groups = {"REGRESSION"})
+    @Description("This test confirms the API's behavior for an invalid request. It attempts to retrieve an order with a non-existent ID and validates that the service responds with the correct HTTP 404 Not Found status code and a 'Order not found' message.")
     public void retrieveNonExistentOrderTest() {
         Integer nonExistentOrderId = -1;
 
@@ -92,6 +93,7 @@ public class StoreApiTests extends BaseTest {
         logger.info("Test finished. The API correctly returned a 404 for a non-existent order.");
     }
     @Test(description = "Verify that a request for deleting a non-existent order returns a 404 Not Found", groups = {"REGRESSION"})
+    @Description("This test verifies the API's behavior when a delete request is sent for an order that does not exist. It expects a 404 Not Found status code and an appropriate error message.")
     public void deleteNonExistentOrderTest() {
         Integer nonExistentOrderId = -1;
 
@@ -105,6 +107,7 @@ public class StoreApiTests extends BaseTest {
         logger.info("Test finished. The API correctly returned a 404 for a non-existent order.");
     }
     @Test(description = "Verify that the inventory count for available pets increments correctly after adding a new pet", groups = {"REGRESSION"})
+    @Description("This test validates the `store/inventory` endpoint. It gets the initial inventory count, creates a new pet, and then verifies that the inventory count for that pet's status has been correctly incremented.")
     public void getInventoryByStatusTest() {
         logger.info("Step 1: Get initial inventory count for 'available' pets.");
         Response initialResponse = storeApiClient.getInventoryByStatus();

@@ -5,6 +5,8 @@ import com.myapi.tests.models.Category;
 import com.myapi.tests.models.Pet;
 import com.myapi.tests.models.Tag;
 import com.myapi.tests.specs.ApiSpecifications;
+import io.qameta.allure.Description;
+import io.qameta.allure.Flaky;
 import io.restassured.response.Response;
 import org.apache.http.HttpStatus;
 import org.testng.annotations.AfterMethod;
@@ -75,12 +77,14 @@ public class PetStoreApiTests extends BaseTest {
     }
 
     @Test(description = "Verify that the service is running and returns available pets", groups = {"SMOKE"})
+    @Description("This test performs a simple GET request to the /pet/findByStatus endpoint to ensure the API service is active and responding with a 200 OK status code for the 'available' status.")
     public void checkServiceHealth() {
         petApiClient.getPetsByStatus("available");
         System.out.println("Service Health Check Completed.");
     }
 
     @Test(description = "Create a new pet and then retrieve it by ID to verify its creation", groups = {"SMOKE"})
+    @Description("This test creates a new pet with random data and then verifies that the pet's details (ID, name, category, status, etc.) are correctly stored and can be retrieved via the API.")
     public void createAndGetPetTest() {
         Pet newPet = createRandomPet();
 
@@ -101,6 +105,8 @@ public class PetStoreApiTests extends BaseTest {
     }
 
     @Test(description = "Update an existing pet's details and verify the changes", groups = {"SMOKE"})
+    @Description("This test creates a new pet, updates its name and status, and then verifies that the changes are correctly reflected in the API response and when retrieving the pet again by ID.")
+    @Flaky
     public void updatePetTest() {
         Pet petToUpdate = createRandomPet();
 
@@ -130,6 +136,7 @@ public class PetStoreApiTests extends BaseTest {
     }
 
     @Test(description = "Delete a pet and verify it can no longer be retrieved", groups = {"SMOKE"})
+    @Description("This test performs a full delete lifecycle: it creates a pet, deletes it via the API, and then verifies that a subsequent GET request returns a 404 Not Found status code.")
     public void deletePetTest() {
         Pet petToDelete = createRandomPet();
 
@@ -152,6 +159,7 @@ public class PetStoreApiTests extends BaseTest {
     }
 
     @Test(description = "Verify that API returns 404 when trying to get a non-existent pet", groups = {"REGRESSION"})
+    @Description("This test confirms the API's behavior for an invalid request. It attempts to retrieve a pet with a non-existent ID and validates that the service responds with the correct HTTP 404 Not Found status code and a 'Pet not found' message.")
     public void getNonExistentPetTest() {
         Integer nonExistentPetId = -1;
 
