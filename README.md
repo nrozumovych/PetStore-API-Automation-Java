@@ -9,3 +9,8 @@ This repository hosts an automated API testing framework developed to validate t
 * Showcasing practical skills in API testing, test data management, and comprehensive test reporting.
 
 This framework is designed for easy execution and provides clear, actionable test results, simulating real-world API interactions.
+
+**Comprehensive Reporting with Allure**
+
+The framework is integrated with Allure Report to provide clear, actionable, and visually appealing test reports. This helps in quick analysis of test runs and effective communication of results to stakeholders.
+<img width="2553" height="1157" alt="QIP Shot - Screen 019" src="https://github.com/user-attachments/assets/a61fd26f-d716-4120-b88d-9bd984fa6364" />
